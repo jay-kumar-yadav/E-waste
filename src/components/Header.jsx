@@ -1,7 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
+const Header = ({ isAuthenticated }) => {
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/');
+    window.location.reload(); // Refresh to update auth state
+  };
 
   return (
     <header className="bg-[#F5F5F5]">
@@ -10,10 +19,10 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
           {/* Logo - Left */}
           <div className="flex-shrink-0">
             <button 
-              onClick={() => onNavigate && onNavigate('home')}
+              onClick={() => navigate('/')}
               className="text-2xl md:text-3xl font-bold "
             >
-              <span className='text-green-800'>wastee</span>
+              <span className='text-green-800'>E - Sangrahan</span>
             </button>
           </div>
 
@@ -47,7 +56,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
             {isAuthenticated ? (
               <>
                 <button
-                  onClick={() => onNavigate && onNavigate('dashboard')}
+                  onClick={() => navigate('/dashboard')}
                   className="px-4 py-2 border-2 border-primary bg-white text-primary rounded-lg transition-colors font-medium"
                   style={{ 
                     fontFamily: 'sans-serif',
@@ -59,7 +68,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                 </button>
                 <button
                   onClick={() => {
-                    onLogout && onLogout();
+                    handleLogout();
                     setIsMobileMenuOpen(false);
                   }}
                   className="px-4 py-2 bg-primary text-white rounded-lg transition-colors font-medium"
@@ -74,7 +83,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
             ) : (
               <>
                 <button
-                  onClick={() => onNavigate && onNavigate('login')}
+                  onClick={() => navigate('/login')}
                   className="px-4 py-2 border-2 border-primary bg-white text-primary rounded-lg transition-colors font-medium"
                   style={{ 
                     fontFamily: 'sans-serif',
@@ -85,7 +94,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                   Login
                 </button>
                 <button
-                  onClick={() => onNavigate && onNavigate('register')}
+                  onClick={() => navigate('/register')}
                   className="px-4 py-2 bg-primary text-white rounded-lg transition-colors font-medium"
                   style={{ 
                     fontFamily: 'sans-serif',
@@ -155,7 +164,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      onNavigate && onNavigate('dashboard');
+                      navigate('/dashboard');
                     }}
                     className="w-full px-4 py-2 border-2 border-primary bg-white text-primary rounded-lg transition-colors font-medium"
                     style={{ 
@@ -169,7 +178,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      onLogout && onLogout();
+                      handleLogout();
                     }}
                     className="w-full px-4 py-2 bg-primary text-white rounded-lg transition-colors font-medium"
                     style={{ 
@@ -185,7 +194,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      onNavigate && onNavigate('login');
+                      navigate('/login');
                     }}
                     className="w-full px-4 py-2 border-2 border-primary bg-white text-primary rounded-lg transition-colors font-medium"
                     style={{ 
@@ -199,7 +208,7 @@ const Header = ({ onNavigate, isAuthenticated, onLogout }) => {
                   <button
                     onClick={() => {
                       setIsMobileMenuOpen(false);
-                      onNavigate && onNavigate('register');
+                      navigate('/register');
                     }}
                     className="w-full px-4 py-2 bg-primary text-white rounded-lg transition-colors font-medium"
                     style={{ 

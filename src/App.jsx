@@ -1,10 +1,16 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import AddCollectionPoint from './pages/AddCollectionPoint';
+import AdminLogin from './pages/AdminLogin';
+import AdminRegister from './pages/AdminRegister';
+import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Lazy load heavy components for better performance
 const LazyWhySell = lazy(() => import('./components/WhySell'));
@@ -21,10 +27,12 @@ const SectionLoader = () => (
 );
 
 // Home page component
-const Home = ({ onNavigate, isAuthenticated, onLogout }) => {
+const Home = () => {
+  const isAuthenticated = !!localStorage.getItem('user');
+  
   return (
     <>
-      <Header onNavigate={onNavigate} isAuthenticated={isAuthenticated} onLogout={onLogout} />
+      <Header isAuthenticated={isAuthenticated} />
       <main>
         <Hero />
         <Suspense fallback={<SectionLoader />}>
@@ -49,47 +57,47 @@ const Home = ({ onNavigate, isAuthenticated, onLogout }) => {
 };
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Check authentication status on mount and when page changes
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    setIsAuthenticated(!!user);
-  }, [currentPage]);
-
-  const navigate = (page) => {
-    setCurrentPage(page);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    setIsAuthenticated(false);
-    setCurrentPage('home');
-  };
-
-  const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
-  };
-
   return (
     <div className="min-h-screen bg-offwhite">
-      {currentPage === 'home' && (
-        <Home 
-          onNavigate={navigate} 
-          isAuthenticated={isAuthenticated} 
-          onLogout={handleLogout}
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Protected User Routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
-      )}
-      {currentPage === 'login' && (
-        <Login onNavigate={navigate} onLoginSuccess={handleLoginSuccess} />
-      )}
-      {currentPage === 'register' && (
-        <Register onNavigate={navigate} onLoginSuccess={handleLoginSuccess} />
-      )}
-      {currentPage === 'dashboard' && (
-        <Dashboard onNavigate={navigate} onLogout={handleLogout} />
-      )}
+        <Route
+          path="/add-collection-point"
+          element={
+            <ProtectedRoute>
+              <AddCollectionPoint />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Admin Routes - Separate URLs */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute requireAdmin={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Home />} />
+      </Routes>
     </div>
   );
 }

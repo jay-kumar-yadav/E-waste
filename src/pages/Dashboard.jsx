@@ -1,19 +1,39 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Megaphone, 
+  Users, 
+  DollarSign, 
+  Handshake, 
+  Package, 
+  Gift, 
+  MessageSquare, 
+  CreditCard 
+} from 'lucide-react';
 import Footer from '../components/Footer';
+import api from '../config/api';
 
-const Dashboard = ({ onNavigate, onLogout }) => {
+const Dashboard = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Get user from localStorage
+    // Get user from localStorage and verify token
+    const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    } else {
-      // If no user, redirect to login
-      onNavigate && onNavigate('login');
+    
+    if (!token || !userData) {
+      navigate('/login');
+      return;
     }
-  }, [onNavigate]);
+    
+    try {
+      setUser(JSON.parse(userData));
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      navigate('/login');
+    }
+  }, [navigate]);
 
   if (!user) {
     return (
@@ -35,10 +55,10 @@ const Dashboard = ({ onNavigate, onLogout }) => {
             {/* Logo */}
             <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start">
               <button 
-                onClick={() => onNavigate && onNavigate('home')}
+                onClick={() => navigate('/')}
                 className="text-xl sm:text-2xl font-bold"
               >
-                <span className="text-green-800">wastee</span>
+                <span className="text-green-800">E - Sangrahan</span>
               </button>
               
               {/* Mobile: Notification and Profile */}
@@ -82,9 +102,7 @@ const Dashboard = ({ onNavigate, onLogout }) => {
 
               {/* Add Collection Point Button */}
               <button
-                onClick={() => {
-                  alert('Add Collection Point feature coming soon!');
-                }}
+                onClick={() => navigate('/add-collection-point')}
                 className="px-3 py-2 sm:px-4 sm:py-2 bg-green-800 text-white rounded-lg font-medium hover:bg-green-700 transition-colors text-sm sm:text-base whitespace-nowrap"
                 style={{ backgroundColor: '#2E6A56' }}
               >
@@ -132,9 +150,7 @@ const Dashboard = ({ onNavigate, onLogout }) => {
                 </svg>
               </div>
               <button
-                onClick={() => {
-                  alert('Add Collection Point feature coming soon!');
-                }}
+                onClick={() => navigate('/add-collection-point')}
                 className="px-3 py-2 bg-green-800 text-white rounded-lg font-medium hover:bg-green-700 transition-colors text-sm whitespace-nowrap"
                 style={{ backgroundColor: '#2E6A56' }}
               >
@@ -150,7 +166,7 @@ const Dashboard = ({ onNavigate, onLogout }) => {
         {/* Back Button and Welcome Section */}
         <div className="mb-4 sm:mb-6 lg:mb-8">
           <button
-            onClick={() => onNavigate && onNavigate('home')}
+            onClick={() => navigate('/')}
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4 transition-colors"
           >
             <svg
@@ -245,20 +261,44 @@ const Dashboard = ({ onNavigate, onLogout }) => {
             <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Quick Actions</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {[
-                { icon: '📢', label: 'Create Campaign' },
-                { icon: '👥', label: 'Manage Users' },
-                { icon: '💰', label: 'Manage Donations' },
-                { icon: '🤝', label: 'Manage Partnerships' },
-                { icon: '📦', label: 'Manage Inventory' },
-                { icon: '🎁', label: 'Manage Rewards' },
-                { icon: '💬', label: 'View User Feedback' },
-                { icon: '💳', label: 'Manage Payments' },
+                { 
+                  label: 'Create Campaign',
+                  icon: <Megaphone className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Users',
+                  icon: <Users className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Donations',
+                  icon: <DollarSign className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Partnerships',
+                  icon: <Handshake className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Inventory',
+                  icon: <Package className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Rewards',
+                  icon: <Gift className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'View User Feedback',
+                  icon: <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
+                { 
+                  label: 'Manage Payments',
+                  icon: <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 mx-auto text-green-600" />
+                },
               ].map((action, index) => (
                 <button
                   key={index}
-                  className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-green-500 hover:shadow-md transition-all text-center"
+                  className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 hover:border-green-500 hover:shadow-md transition-all text-center flex flex-col items-center justify-center"
                 >
-                  <div className="text-xl sm:text-2xl mb-1 sm:mb-2">{action.icon}</div>
+                  <div className="mb-2 sm:mb-3">{action.icon}</div>
                   <div className="text-xs sm:text-sm font-medium text-gray-700 leading-tight">{action.label}</div>
                 </button>
               ))}
@@ -270,36 +310,128 @@ const Dashboard = ({ onNavigate, onLogout }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 lg:gap-6 mb-6 sm:mb-8">
           {/* Bar Chart */}
           <div className="bg-white rounded-lg shadow p-4 sm:p-5 lg:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900">Eco Points Balance Distribution Among Users</h3>
-              <select className="border border-gray-300 rounded px-2 sm:px-3 py-1 text-xs sm:text-sm w-full sm:w-auto">
-                <option>Filter</option>
-              </select>
-            </div>
-            <div className="h-48 sm:h-56 lg:h-64 flex items-end justify-between space-x-1 sm:space-x-2 overflow-x-auto">
-              {Array.from({ length: 17 }).map((_, i) => (
-                <div key={i} className="flex-1 min-w-[20px] flex flex-col items-center">
-                  <div className="w-full flex flex-col-reverse">
-                    <div className="h-6 sm:h-8 bg-green-500 rounded-t"></div>
-                    <div className="h-8 sm:h-10 lg:h-12 bg-red-500 rounded-t"></div>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 gap-3">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Eco Points Balance Distribution Among Users</h3>
+              <div className="flex flex-col items-end gap-2">
+                <button className="flex items-center gap-1 border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-700 bg-gray-50 hover:bg-gray-100 transition-colors">
+                  <span>Filter</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {/* Legend */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#99E6B3' }}></div>
+                    <span className="text-sm text-gray-900">Positive</span>
                   </div>
-                  <span className="text-[10px] sm:text-xs text-gray-500 mt-1 sm:mt-2 whitespace-nowrap">May {i + 1}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FF6666' }}></div>
+                    <span className="text-sm text-gray-900">Negative</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-center space-x-4 mt-3 sm:mt-4">
-              <div className="flex items-center">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded mr-2"></div>
-                <span className="text-xs sm:text-sm text-gray-600">Positive</span>
               </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded mr-2"></div>
-                <span className="text-xs sm:text-sm text-gray-600">Negative</span>
+            </div>
+
+            {/* Chart Container */}
+            <div className="relative w-full overflow-x-auto">
+              <div style={{ minWidth: '800px', height: '320px' }}>
+                <svg width="100%" height="100%" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid meet">
+                  {/* Grid Lines */}
+                  <line x1="50" y1="40" x2="50" y2="280" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="50" y1="40" x2="780" y2="40" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="50" y1="120" x2="780" y2="120" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="50" y1="200" x2="780" y2="200" stroke="#E5E7EB" strokeWidth="1" />
+                  <line x1="50" y1="280" x2="780" y2="280" stroke="#E5E7EB" strokeWidth="1" />
+                  
+                  {/* Zero Line */}
+                  <line x1="50" y1="200" x2="780" y2="200" stroke="#9CA3AF" strokeWidth="1" />
+                  
+                  {/* Y-axis Labels */}
+                  <text x="45" y="45" textAnchor="end" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" fontWeight="400">100</text>
+                  <text x="45" y="125" textAnchor="end" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" fontWeight="400">50</text>
+                  <text x="45" y="205" textAnchor="end" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" fontWeight="400">0</text>
+                  <text x="45" y="285" textAnchor="end" fill="#9CA3AF" fontSize="12" fontFamily="sans-serif" fontWeight="400">-50</text>
+                  
+                  {/* Sample data matching the figure pattern */}
+                  {[
+                    { positive: 75, negative: -15 }, // May 1
+                    { positive: 82, negative: -12 }, // May 2
+                    { positive: 78, negative: -18 }, // May 3
+                    { positive: 85, negative: -14 }, // May 4
+                    { positive: 80, negative: -16 }, // May 5
+                    { positive: 55, negative: -20 }, // May 6 (dip)
+                    { positive: 70, negative: -15 }, // May 7
+                    { positive: 88, negative: -12 }, // May 8
+                    { positive: 58, negative: -18 }, // May 9 (dip)
+                    { positive: 75, negative: -14 }, // May 10
+                    { positive: 82, negative: -16 }, // May 11
+                    { positive: 79, negative: -15 }, // May 12
+                    { positive: 86, negative: -13 }, // May 13
+                    { positive: 81, negative: -17 }, // May 14
+                    { positive: 84, negative: -14 }, // May 15
+                    { positive: 77, negative: -16 }, // May 16
+                    { positive: 80, negative: -15 }, // May 17
+                  ].map((data, i) => {
+                    const barWidth = 16;
+                    const barSpacing = 14;
+                    const startX = 60;
+                    const xPos = startX + i * (barWidth + barSpacing) + barWidth / 2;
+                    const zeroY = 200;
+                    const maxHeight = 160; // Height for 100 units (from 0 to 100)
+                    const minHeight = 160; // Height for -50 units (from 0 to -50)
+                    
+                    // Calculate bar heights
+                    const positiveHeight = (data.positive / 100) * maxHeight;
+                    const negativeHeight = Math.abs((data.negative / 50) * minHeight);
+                    
+                    // Calculate bar positions
+                    const positiveY = zeroY - positiveHeight;
+                    const negativeY = zeroY;
+                    
+                    return (
+                      <g key={i}>
+                        {/* Positive bar (light green) */}
+                        <rect
+                          x={xPos - barWidth / 2}
+                          y={positiveY}
+                          width={barWidth}
+                          height={positiveHeight}
+                          fill="#99E6B3"
+                          rx="2"
+                        />
+                        {/* Negative bar (red) */}
+                        <rect
+                          x={xPos - barWidth / 2}
+                          y={negativeY}
+                          width={barWidth}
+                          height={negativeHeight}
+                          fill="#FF6666"
+                          rx="2"
+                        />
+                        {/* X-axis label (every 2 days: May 1, 3, 5, 7, 9, 11, 13, 15, 17) */}
+                        {i % 2 === 0 && (
+                          <text
+                            x={xPos}
+                            y="300"
+                            textAnchor="middle"
+                            fill="#9CA3AF"
+                            fontSize="11"
+                            fontFamily="sans-serif"
+                            fontWeight="400"
+                          >
+                            May {i + 1}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+                </svg>
               </div>
             </div>
           </div>
 
-          {/* Pie Chart */}
+          {/* Donut Chart */}
           <div className="bg-white rounded-lg shadow p-4 sm:p-5 lg:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
               <h3 className="text-base sm:text-lg font-semibold text-gray-900">Distribution of E-waste Donations</h3>
@@ -307,42 +439,78 @@ const Dashboard = ({ onNavigate, onLogout }) => {
                 <option>Filter</option>
               </select>
             </div>
-            <div className="flex items-center justify-center">
-              <div className="relative w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-sm sm:text-lg lg:text-2xl font-bold text-gray-900">Total</p>
-                    <p className="text-sm sm:text-lg lg:text-2xl font-bold text-gray-900">Donations</p>
-                    <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-green-800">1,000</p>
+            
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-6 lg:gap-8">
+              {/* Categories List - Left Side */}
+              <div className="flex-1 space-y-3 sm:space-y-4 w-full lg:w-auto">
+                {[
+                  { label: 'Computers and accessories', value: '35%', color: '#065F46' }, 
+                  { label: 'Mobile phones and tablets', value: '25%', color: '#047857' }, 
+                  { label: 'TVs and monitors', value: '15%', color: '#059669' }, 
+                  { label: 'Batteries', value: '10%', color: '#10B981' }, 
+                  { label: 'Other electronic devices', value: '10%', color: '#34D399' }, 
+                  { label: 'Appliances', value: '5%', color: '#6EE7B7' }, 
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between text-sm sm:text-base">
+                    <div className="flex items-center flex-1 min-w-0">
+                      <div 
+                        className="w-3 h-3 sm:w-4 sm:h-4 rounded mr-3 flex-shrink-0" 
+                        style={{ backgroundColor: item.color }}
+                      ></div>
+                      <span className="text-gray-700">{item.label}</span>
+                    </div>
+                    <span className="font-semibold text-gray-900 ml-4 flex-shrink-0">{item.value}</span>
                   </div>
-                </div>
-                <svg className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 transform -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#10B981" strokeWidth="20" strokeDasharray="35 100" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#3B82F6" strokeWidth="20" strokeDasharray="25 100" strokeDashoffset="-35" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#F59E0B" strokeWidth="20" strokeDasharray="15 100" strokeDashoffset="-60" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#EF4444" strokeWidth="20" strokeDasharray="10 100" strokeDashoffset="-75" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#8B5CF6" strokeWidth="20" strokeDasharray="10 100" strokeDashoffset="-85" />
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="#EC4899" strokeWidth="20" strokeDasharray="5 100" strokeDashoffset="-95" />
-                </svg>
+                ))}
               </div>
-            </div>
-            <div className="mt-4 sm:mt-6 space-y-1.5 sm:space-y-2">
-              {[
-                { label: 'Computers and accessories', value: '35%', color: 'bg-green-500' },
-                { label: 'Mobile phones and tablets', value: '25%', color: 'bg-blue-500' },
-                { label: 'TVs and monitors', value: '15%', color: 'bg-yellow-500' },
-                { label: 'Batteries', value: '10%', color: 'bg-red-500' },
-                { label: 'Other electronic devices', value: '10%', color: 'bg-purple-500' },
-                { label: 'Appliances', value: '5%', color: 'bg-pink-500' },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center justify-between text-xs sm:text-sm">
-                  <div className="flex items-center flex-1 min-w-0">
-                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${item.color} rounded mr-2 flex-shrink-0`}></div>
-                    <span className="text-gray-700 truncate">{item.label}</span>
+
+              {/* Donut Chart - Right Side */}
+              <div className="flex-shrink-0">
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-64 lg:h-64">
+                  {/* Center Text */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center">
+                      <p className="text-xs sm:text-sm text-gray-500 mb-1">Total Donations</p>
+                      <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">1,000</p>
+                    </div>
                   </div>
-                  <span className="font-semibold text-gray-900 ml-2 flex-shrink-0">{item.value}</span>
+                  
+                  {/* Donut Chart SVG */}
+                  <svg 
+                    className="w-full h-full transform -rotate-90" 
+                    viewBox="0 0 100 100"
+                  >
+                    {/* Chart data: percentages */}
+                    {[
+                      { percent: 35, color: '#065F46', offset: 0 },
+                      { percent: 25, color: '#047857', offset: 35 },
+                      { percent: 15, color: '#059669', offset: 60 },
+                      { percent: 10, color: '#10B981', offset: 75 },
+                      { percent: 10, color: '#34D399', offset: 85 },
+                      { percent: 5, color: '#6EE7B7', offset: 95 },
+                    ].map((segment, i) => {
+                      const circumference = 2 * Math.PI * 40; // radius = 40
+                      const strokeDasharray = `${(segment.percent / 100) * circumference} ${circumference}`;
+                      const strokeDashoffset = -((segment.offset / 100) * circumference);
+                      
+                      return (
+                        <circle
+                          key={i}
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          fill="none"
+                          stroke={segment.color}
+                          strokeWidth="12"
+                          strokeDasharray={strokeDasharray}
+                          strokeDashoffset={strokeDashoffset}
+                          strokeLinecap="round"
+                        />
+                      );
+                    })}
+                  </svg>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

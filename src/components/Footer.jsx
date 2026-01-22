@@ -14,10 +14,10 @@ const Footer = () => {
           {/* Left Side - Company Info */}
           <div className="flex flex-col">
             <a href="/" className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#2E6A56' }}>
-              wastee
+              E - Sangrahan
             </a>
             <p className="text-sm md:text-base text-gray-800">
-              Copyright 2026, wastee
+              Copyright 2026, E - Sangrahan
             </p>
           </div>
 
