@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5002/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://e-waste-backend-jxw4.onrender.com/api';
 
 // Helper function to get auth token
 const getToken = () => {
